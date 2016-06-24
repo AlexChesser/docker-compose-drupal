@@ -1,0 +1,1 @@
+docker exec -it myrepository_web_1 bash

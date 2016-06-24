@@ -1,0 +1,36 @@
+reverse-proxy:
+  container_name: reverse-proxy
+  image: jwilder/nginx-proxy
+  ports: 
+    - "80:80"
+    - "443:443"
+  volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /myrepository/certs:/etc/nginx/certs
+mysql:  
+  image: mysql:latest
+  # expose will make sure this port is accessible
+  # WITHIN the docker server
+  expose:
+    - "3306"
+  #ports:
+  #  - "3306:3306"
+  environment:
+    MYSQL_DATABASE: myrepository
+    MYSQL_USER: drupal
+    MYSQL_PASSWORD: drupal
+    MYSQL_ROOT_PASSWORD: admin123
+  volumes:
+    - /myrepository/data:/docker-entrypoint-initdb.d
+web:  
+  build: .
+  volumes:
+    - /myrepository/logs:/var/log/supervisor
+    - /myrepository/data:/host/data
+    - /myrepository/export:/host/export
+  links:
+    - mysql:mysql
+  environment:
+    VIRTUAL_HOST: stg.myrepository.com
+    BASE_URL: https://stg.myrepository.com
+    DRUPAL_ENVIRONMENT: staging

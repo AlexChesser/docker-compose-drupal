@@ -1,0 +1,1 @@
+docker exec myrepository_web_1 drush ard --root=/var/www/html --overwrite --destination=/host/export/myrepository.com.tar

@@ -1,0 +1,29 @@
+mysql:  
+  image: mysql:latest
+  expose:
+    - "3306"
+  ports:
+    - "3306:3306"
+  environment:
+    MYSQL_DATABASE: database
+    MYSQL_USER: drupal
+    MYSQL_PASSWORD: drupal
+    MYSQL_ROOT_PASSWORD: admin123
+  volumes:
+    - /myrepository/data:/docker-entrypoint-initdb.d
+web:  
+  image: myrepository
+  # alternative image from tutorial
+  #image: iiiepe/nginx-drupal6
+  volumes:
+    - /myrepository/application/html/sites:/var/www/html/sites
+    - logs:/var/log/supervisor
+    - files:/var/www/sites/default/files
+    - /myrepository/data:/host/data
+    - /myrepository/export:/host/export
+  links:
+    - mysql:mysql
+  environment:
+    VIRTUAL_HOST: myrepositorypro.com
+    BASE_URL: http://myrepositorypro.com
+    DRUPAL_ENVIRONMENT: development
